@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 import sys
 from yard import Yard
+from rich import print
+
+version = "0.0.2"
 
 if __name__ == "__main__":
     yard = Yard()

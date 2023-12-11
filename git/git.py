@@ -1,6 +1,8 @@
+import uuid
 from git import Repo
 from git.repo_data import RepoData
 from rich.console import Console
+from rich.prompt import Prompt
 from filesystem.filesystem import FileSystemManager
 
 console = Console()
@@ -9,6 +11,8 @@ fs = FileSystemManager()
 class GitRepo:
     def __init__(self, origin_url=None, json_file=None):
         self.json_file = json_file
+        self.working_dir = f".{uuid.uuid4().hex[:8]}_yard"
+        fs.mkdir(self.working_dir)
         if origin_url:
             self.origin = RepoData(origin_url)
             self.target = RepoData(origin_url)
@@ -16,6 +20,19 @@ class GitRepo:
         elif json_file:
             self.json = RepoData(json_file=json_file)
             self.origin_info = self.load_info()
+
+    def clear_all(self):
+        yarn_folders = [folder for folder in fs.ls() if folder.endswith("_yarn")]
+        for folder in yarn_folders:
+            if Prompt.ask(f"Are you sure you want to delete the {folder}? (Y/n)"):
+                fs.rm(folder, recursive=True)
+                console.print(f"Deleted {folder}")
+
+    def clear_all(self):
+        for folder in fs.ls():
+            if folder.endswith("_yarn"):
+                fs.rm(folder, recursive=True)
+                console.print(f"Deleted {folder}")
 
     def extract_info(self, url):
         repo = RepoData(url)
@@ -51,6 +68,12 @@ class GitRepo:
         console.print(info)
         return RepoData(data=info)
 
+    def clone(self):
+        console.print("Cloning repository...")
+        with console.status("[bold green]Cloning...") as status:
+            self.target_repo = Repo.clone_from(self.origin.origin, self.working_dir)
+            console.print("Repository cloned successfully.")
+            
     def save_info(self, info):
         if self.json_file:
             info.save_to_json(self.json_file)
@@ -79,3 +102,4 @@ class GitRepo:
 
     def pull_changes(self):
         self.target_repo.git.pull()
+

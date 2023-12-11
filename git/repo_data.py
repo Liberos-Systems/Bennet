@@ -1,7 +1,8 @@
-import json
+from json.json import Json
 
 class RepoData:
     def __init__(self, data=None, json_file=None, key=None):
+        self.json_handler = Json(json_file) if json_file else None
         if data:
             self.origin = data.get('origin')
             self.target = data.get('target', self.origin)
@@ -34,10 +35,10 @@ class RepoData:
             self.load_from_json(json_file, key)
 
     def load_from_json(self, json_file, key=None):
-        with open(json_file, 'r') as file:
-            data = json.load(file)
-            if key:
-                data = data.get(key)
+        self.json_handler = Json(json_file)
+        data = self.json_handler.load()
+        if key:
+            data = data.get(key)
         self.__init__(data)
 
     def save_to_json(self, file_path, key=None):
@@ -70,14 +71,7 @@ class RepoData:
             "repo_push_count_last_week": self.repo_push_count_last_week,
             "repo_pull_request_count_last_week": self.repo_pull_request_count_last_week
         }
-        with open(file_path, 'r+') as file:
-            existing_data = json.load(file)
-            if key:
-                if key not in existing_data:
-                    existing_data[key] = {}
-                existing_data[key].update(data)
-            else:
-                existing_data.update(data)
-            file.seek(0)
-            json.dump(existing_data, file)
-            file.truncate()
+        self.json_handler = Json(file_path)
+        self.json_handler.add_data(key, data) if key else self.json_handler.update_data(key, data)
+        self.json_handler.save()
+
