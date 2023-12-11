@@ -4,9 +4,13 @@ from yard import Yard
 
 if __name__ == "__main__":
     yard = Yard()
-    function_name = sys.argv[1]
-    function = getattr(yard, function_name, None)
-    if function:
-        function()
+    if len(sys.argv) > 1:
+        function_name = sys.argv[1]
+        function = getattr(yard, function_name, None)
+        if function:
+            function()
+        else:
+            print(f"No such function: {function_name}")
     else:
-        print(f"No such function: {function_name}")
+        print("No function name provided in command line arguments.")
+
