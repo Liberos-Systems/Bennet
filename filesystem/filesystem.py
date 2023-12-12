@@ -1,3 +1,4 @@
+import icecream as ic
 import os
 import shutil
 from pathlib import Path
@@ -7,7 +8,7 @@ class FileSystemManager:
     def __init__(self):
         self.root_ = Path.cwd()
         if debug:
-            print(self.root_)
+            ic(self.root_)
         self.absolutePaths_ = []
 
     def file_exists(self, path):
@@ -22,7 +23,7 @@ class FileSystemManager:
             homeDir = Path.home()
             if homeDir is None:
                 if debug:
-                    print("Failed to get home directory.")
+                    ic("Failed to get home directory.")
                 return filePaths
             targetPath = homeDir
         elif path == "" or path == "*":
@@ -36,7 +37,7 @@ class FileSystemManager:
 
         if not targetPath.is_dir():
             if debug:
-                print(f"Provided path is not a directory: {str(targetPath)}")
+                ic(f"Provided path is not a directory: {str(targetPath)}")
             return filePaths
 
         for entry in targetPath.iterdir():
@@ -57,18 +58,18 @@ class FileSystemManager:
                     os.makedirs(dstPath.parent)
                 except Exception as e:
                     if debug:
-                        print(f"Failed to create directory: {str(dstPath.parent)}")
+                        ic(f"Failed to create directory: {str(dstPath.parent)}")
                     return False
             try:
                 shutil.copy2(srcPath, dstPath)
             except Exception as e:
                 if debug:
-                    print(f"Failed to copy file: {src}")
+                    ic(f"Failed to copy file: {src}")
                 return False
             return True
         else:
             if debug:
-                print(f"Source file does not exist: {src}")
+                ic(f"Source file does not exist: {src}")
             return False
 
     def mv(self, src, dst):
@@ -80,18 +81,18 @@ class FileSystemManager:
                     os.makedirs(dstPath.parent)
                 except Exception as e:
                     if debug:
-                        print(f"Failed to create directory: {str(dstPath.parent)}")
+                        ic(f"Failed to create directory: {str(dstPath.parent)}")
                     return False
             try:
                 shutil.move(srcPath, dstPath)
             except Exception as e:
                 if debug:
-                    print(f"Failed to move file: {src}")
+                    ic(f"Failed to move file: {src}")
                 return False
             return True
         else:
             if debug:
-                print(f"Source file does not exist: {src}")
+                ic(f"Source file does not exist: {src}")
             return False
 
     def rm(self, name):
@@ -101,12 +102,12 @@ class FileSystemManager:
                 os.remove(_path)
             except Exception as e:
                 if debug:
-                    print(f"Failed to remove file: {name}")
+                    ic(f"Failed to remove file: {name}")
                 return False
             return True
         else:
             if debug:
-                print(f"File does not exist: {name}")
+                ic(f"File does not exist: {name}")
             return False
 
     def rmdir(self, name):
@@ -116,25 +117,25 @@ class FileSystemManager:
                 shutil.rmtree(_path)
             except Exception as e:
                 if debug:
-                    print(f"Failed to remove directory: {name}")
+                    ic(f"Failed to remove directory: {name}")
                 return False
             return True
         else:
             if debug:
-                print(f"Directory does not exist: {name}")
+                ic(f"Directory does not exist: {name}")
             return False
 
     def mkdir(self, name):
         if name.endswith('/'):
             if debug:
-                print(f"Path ends with '/': {name}")
+                ic(f"Path ends with '/': {name}")
             return False
 
         _name = name
         _path = None
         if _name.startswith("./"):  # If name starts with "./"
             if debug:
-                print("Converted relative path to absolute")
+                ic("Converted relative path to absolute")
             try:
                 _name = _name[2:]  # Remove "./" from the start of the path
                 path = Path(self.root_.as_posix() + _name[1:])
@@ -142,12 +143,12 @@ class FileSystemManager:
                     path = self.root_ / path
                 if self.root_ not in path.parents:
                     if debug:
-                        print(f"Path is not in the subpath of root or one path is relative and the other is absolute: {str(path)}")
+                        ic(f"Path is not in the subpath of root or one path is relative and the other is absolute: {str(path)}")
                     return False
                 _path = path
             except Exception as e:
                 if debug:
-                    print(f"Failed to create path. Error: {str(e)}")
+                    ic(f"Failed to create path. Error: {str(e)}")
                 return False
         else:
             try:
@@ -157,7 +158,7 @@ class FileSystemManager:
                 _path = path
             except Exception as e:
                 if debug:
-                    print(f"Failed to create path. Error: {str(e)}")
+                    ic(f"Failed to create path. Error: {str(e)}")
                 return False
 
         if '/' in _path.as_posix():
@@ -169,15 +170,15 @@ class FileSystemManager:
                     if not intermediatePath.exists():
                         os.mkdir(intermediatePath)
                         if debug:
-                            print(f"Created directory: {str(intermediatePath)}")
+                            ic(f"Created directory: {str(intermediatePath)}")
                 except Exception as e:
                     if debug:
-                        print(f"Failed to create directory: {str(intermediatePath)}. Error: {str(e)}")
+                        ic(f"Failed to create directory: {str(intermediatePath)}. Error: {str(e)}")
                     return False
             return True
         else:
             if debug:
-                print(f"Path is not in Unix format: {str(_path)}")
+                ic(f"Path is not in Unix format: {str(_path)}")
             return False
 
     def touch(self, name):
@@ -191,11 +192,11 @@ class FileSystemManager:
                 return True
             else:
                 if debug:
-                    print(f"File already exists: {str(newFile)}")
+                    ic(f"File already exists: {str(newFile)}")
                 return False
         else:
             if debug:
-                print(f"Path is not in Unix format: {str(path)}")
+                ic(f"Path is not in Unix format: {str(path)}")
             return False
 
     def pwd(self):
@@ -207,23 +208,23 @@ class FileSystemManager:
             if _path.is_dir():
                 self.root_ = _path
                 if debug:
-                    print(f"Changed to: {str(_path)}")
+                    ic(f"Changed to: {str(_path)}")
                 return True
             else:
                 if debug:
-                    print(f"Path does not exist or is not a directory: {str(_path)}")
+                    ic(f"Path does not exist or is not a directory: {str(_path)}")
                 return False
 
         elif path == "~":
             self.root_ = Path.home()
             if debug:
-                print(f"Changed to: {str(_path)}")
+                ic(f"Changed to: {str(_path)}")
             return True
 
         elif path.startswith(".."):
             self.root_ = self.root_.parents[1]
             if debug:
-                print(f"Changed to: {str(_path)}")
+                ic(f"Changed to: {str(_path)}")
             return True
 
         elif path.startswith("."):
@@ -231,23 +232,23 @@ class FileSystemManager:
             if _path.is_dir():
                 self.root_ = _path
                 if debug:
-                    print(f"Changed to: {str(_path)}")
+                    ic(f"Changed to: {str(_path)}")
                 return True
             else:
                 if debug:
-                    print(f"Path does not exist or is not a directory: {str(_path)}")
+                    ic(f"Path does not exist or is not a directory: {str(_path)}")
                 return False
 
         else:
             self.root_ = self.root_ / path
             if debug:
-                print(self.root_)
+                ic(self.root_)
             if self.root_.is_dir():
                 if debug:
-                    print(f"Changed to: {str(_path)}")
+                    ic(f"Changed to: {str(_path)}")
                 return True
             else:
                 if debug:
-                    print(f"Path does not exist or is not a directory: {str(_path)}")
+                    ic(f"Path does not exist or is not a directory: {str(_path)}")
                 return False
 

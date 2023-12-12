@@ -1,11 +1,11 @@
 from json.json import Json
 from config import debug
+from icecream import ic
 
 class RepoData:
     def __init__(self, data=None, json_file=None, key=None):
         self.json_handler = Json(json_file) if json_file else None
-        if debug:
-            print("Initializing RepoData")
+        ic("Initializing RepoData") if debug else None
         if data:
             self.origin = data.get('origin')
             self.target = data.get('target', self.origin)
@@ -40,8 +40,7 @@ class RepoData:
     def load_from_json(self, json_file, key=None):
         self.json_handler = Json(json_file)
         data = self.json_handler.load()
-        if debug:
-            print("Loaded data from JSON")
+        ic("Loaded data from JSON") if debug else None
         if key:
             data = data.get(key)
         self.__init__(data)
@@ -79,6 +78,4 @@ class RepoData:
         self.json_handler = Json(file_path)
         self.json_handler.add_data(key, data) if key else self.json_handler.update_data(key, data)
         self.json_handler.save()
-        if debug:
-            print("Saved data to JSON")
-
+        ic("Saved data to JSON") if debug else None

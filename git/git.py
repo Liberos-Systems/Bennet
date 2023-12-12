@@ -4,6 +4,8 @@ from git.repo_data import RepoData
 from rich.console import Console
 from rich.prompt import Prompt
 from filesystem.filesystem import FileSystemManager
+from config import debug
+from icecream import ic
 
 console = Console()
 fs = FileSystemManager()
@@ -13,6 +15,7 @@ class GitRepo:
         self.json_file = json_file
         self.working_dir = f".{uuid.uuid4().hex[:8]}_yard"
         fs.mkdir(self.working_dir)
+        ic(f"Created directory {self.working_dir}") if debug else None
         if origin_url:
             self.origin = RepoData(origin_url)
             self.target = RepoData(origin_url)
@@ -26,13 +29,13 @@ class GitRepo:
         for folder in yarn_folders:
             if Prompt.ask(f"Are you sure you want to delete the {folder}? (Y/n)"):
                 fs.rm(folder, recursive=True)
-                console.print(f"Deleted {folder}")
+                ic(f"Deleted {folder}") if debug else None
 
     def clear_all(self):
         for folder in fs.ls():
             if folder.endswith("_yarn"):
                 fs.rm(folder, recursive=True)
-                console.print(f"Deleted {folder}")
+                ic(f"Deleted {folder}") if debug else None
 
     def extract_info(self, url):
         repo = RepoData(url)
@@ -65,41 +68,44 @@ class GitRepo:
             "repo_push_count_last_week": repo.repo_push_count_last_week,
             "repo_pull_request_count_last_week": repo.repo_pull_request_count_last_week
         }
-        console.print(info)
+        ic(info) if debug else None
         return RepoData(data=info)
 
     def clone(self):
-        console.print("Cloning repository...")
+        ic("Cloning repository...") if debug else None
         with console.status("[bold green]Cloning...") as status:
             self.target_repo = Repo.clone_from(self.origin.origin, self.working_dir)
-            console.print("Repository cloned successfully.")
+            ic("Repository cloned successfully.") if debug else None
             
     def save_info(self, info):
         if self.json_file:
             info.save_to_json(self.json_file)
         else:
-            console.print("No JSON file specified for saving info.")
+            ic("No JSON file specified for saving info.") if debug else None
 
     def load_info(self):
         if self.json_file:
             repo = RepoData(json_file=self.json_file)
             return repo.load_from_json(self.json_file)
         else:
-            console.print("No JSON file specified for loading info.")
+            ic("No JSON file specified for loading info.") if debug else None
 
     def change_json_file(self, new_json_file):
         fs.mv(self.json_file, new_json_file)
         self.json_file = new_json_file
+        ic(f"Changed JSON file to {new_json_file}") if debug else None
 
     def change_target_repo(self, new_repo_url):
         self.target.target = new_repo_url
         self.target_repo = Repo(self.target.target)
         self.target_info = self.extract_info(new_repo_url)
         self.save_info(self.target_info)
+        ic(f"Changed target repository to {new_repo_url}") if debug else None
 
     def push_changes(self):
         self.target_repo.git.push()
+        ic("Pushed changes to repository") if debug else None
 
     def pull_changes(self):
         self.target_repo.git.pull()
-
+        ic("Pulled changes from repository") if debug else None

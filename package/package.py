@@ -2,6 +2,7 @@ import os
 import json
 from rich.prompt import Prompt
 from config import debug
+from icecream import ic
 
 class Package:
     def __init__(self, package_path):
@@ -14,7 +15,7 @@ class Package:
     def add_new_field(self, field_name, field_content):
         setattr(self, field_name, field_content)
         self.save_package_json()  # Save changes to json file after adding new field
-        if debug: print(f"Added new field {field_name} with content {field_content}")
+        ic(f"Added new field {field_name} with content {field_content}")
 
     def load_package_json(self):
         with open(self.package_path, 'r') as json_file:
@@ -25,7 +26,7 @@ class Package:
                         setattr(self, sub_key, sub_value)
                 else:
                     setattr(self, key, value)
-        if debug: print(f"Loaded package.json from {self.package_path}")
+        ic(f"Loaded package.json from {self.package_path}")
 
     def create_new_package_file_json(self):
         self.name = Prompt.ask("question name: ", default=os.path.basename(os.getcwd()))
@@ -41,18 +42,18 @@ class Package:
         self.scripts = {}
         self.buildsystem = ""
         self.save_package_json()
-        if debug: print("Created package.json")
+        ic("Created package.json")
 
     def save_package_json(self):
         package_data = {attr: getattr(self, attr) for attr in self.__dict__}
         with open(self.package_path, 'w') as json_file:
             json.dump(package_data, json_file, indent=4)
-        if debug: print(f"Saved package.json to {self.package_path}")
+        ic(f"Saved package.json to {self.package_path}")
 
     def print_attributes(self):
         for attr, value in self.__dict__.items():
             if isinstance(value, str):
-                if debug: print(f"{attr}: {value}")
+                ic(f"{attr}: {value}")
             else:
                 for sub_attr, sub_value in value.items():
-                    if debug: print(f"{attr}.{sub_attr}: {sub_value}")
+                    ic(f"{attr}.{sub_attr}: {sub_value}")
