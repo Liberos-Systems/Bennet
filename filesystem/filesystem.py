@@ -1,4 +1,4 @@
-import icecream as ic
+from icecream import ic
 import os
 import shutil
 from pathlib import Path
