@@ -3,7 +3,7 @@ import sys
 from yard import Yard
 from rich import print
 
-version = "0.0.2"
+from config import debug
 
 if __name__ == "__main__":
     yard = Yard()
@@ -13,7 +13,10 @@ if __name__ == "__main__":
         if function:
             function()
         else:
-            print(f"No such function: {function_name}")
+            if not debug:
+                print(f"No such function: {function_name}")
+            yard.init()
     else:
-        print("No function name provided in command line arguments.")
+        if not debug: 
+            print("No function name provided in command line arguments.")
 
