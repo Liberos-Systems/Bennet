@@ -4,6 +4,7 @@ from rich import print
 import os
 import subprocess
 from package.package import Package
+from config import debug
 
 class Debian(Package):
     def __init__(self, package_path):
@@ -14,16 +15,16 @@ class Debian(Package):
         self.check_dependencies()
 
     def check_dependencies(self):
-        print("[INFO] Checking for necessary tools...")
+        if debug: print("[INFO] Checking for necessary tools...")
         tools = ["dpkg-deb"]
         for tool in tools:
             if not self.is_tool_installed(tool):
-                print(f"[WARNING] {tool} is not installed. Do you want to install it? (y/n)")
+                if debug: print(f"[WARNING] {tool} is not installed. Do you want to install it? (y/n)")
                 response = input()
                 if response.lower() == 'y':
                     self.install_tool(tool)
                 else:
-                    print(f"[ERROR] {tool} is not installed and installation declined. Exiting.")
+                    if debug: print(f"[ERROR] {tool} is not installed and installation declined. Exiting.")
                     return
 
     def is_tool_installed(self, tool):
@@ -34,20 +35,20 @@ class Debian(Package):
             return False
     
     def copy_files(self, source, destination):
-        print(f"[INFO] Copying files from {source} to {destination}...")
+        if debug: print(f"[INFO] Copying files from {source} to {destination}...")
         self.fs.cp(source, self.fs.join(self.package_dir, destination))
 
     def create_script_file(self, script_name, content):
-        print(f"[INFO] Creating {script_name} script...")
+        if debug: print(f"[INFO] Creating {script_name} script...")
         with open(self.fs.join(self.package_dir, "DEBIAN", script_name), "w") as script_file:
             script_file.write(content)
 
     def install_tool(self, tool):
-        print(f"[INFO] Installing {tool}...")
+        if debug: print(f"[INFO] Installing {tool}...")
         os.system(f"sudo apt-get install {tool}")
 
     def create_package_structure(self):
-        print("[INFO] Creating package structure...")
+        if debug: print("[INFO] Creating package structure...")
         self.fs.mkdir(self.package_dir)
         self.fs.mkdir(self.fs.join(self.package_dir, "DEBIAN"))
         self.fs.mkdir(self.fs.join(self.package_dir, "usr"))
@@ -61,22 +62,22 @@ class Debian(Package):
         os.chmod(self.fs.join(self.package_dir, "DEBIAN", script_name), 0o755)
 
     def create_control_file(self):
-        print("[INFO] Creating control file...")
+        if debug: print("[INFO] Creating control file...")
         control_content = f"""Package: {self.name}
         Version: {self.version}
         Architecture: {self.architecture}
         Maintainer: {self.author}
         Description: {self.description}
         """
-        print(f"[INFO] Control content before writing: {control_content}")
+        if debug: print(f"[INFO] Control content before writing: {control_content}")
         with open(self.fs.join(self.package_dir, "DEBIAN", "control"), "w") as control_file:
             control_file.write(control_content)
 
     def build_package(self):
-        print("[INFO] Building package...")
+        if debug: print("[INFO] Building package...")
         os.system(f"dpkg-deb --build {self.package_dir}")
         self.fs.mv(f"{self.name}_{self.version}_{self.architecture}.deb", self.target_dir)
-        print(f"[INFO] Package {self.name}_{self.version}_{self.architecture}.deb built and moved to {self.target_dir}")
+        if debug: print(f"[INFO] Package {self.name}_{self.version}_{self.architecture}.deb built and moved to {self.target_dir}")
 
     def create_and_build_package(self):
         self.create_package_structure()
