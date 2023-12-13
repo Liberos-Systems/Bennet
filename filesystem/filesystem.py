@@ -272,4 +272,14 @@ class FileSystemManager:
                 if debug:
                     ic(f"Path does not exist or is not a directory: {str(_path)}")
                 return False
+            
+    def combine_paths(self, absolute_path, relative_path):
+        if debug:
+            ic("combine_paths")
+        absolute_path = Path(absolute_path)
+        relative_path = Path(relative_path)
+        combined_path = absolute_path / relative_path
+        if debug:
+            ic(f"Combined path: {combined_path}")
+        return combined_path
 

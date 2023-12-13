@@ -28,8 +28,6 @@ class Yard:
             if(self.fs.mkdir(self.root_dir)):
                 self.fs.cd(self.root_dir)
 
-            self.init()
-
         else:
             print("no debug")
 

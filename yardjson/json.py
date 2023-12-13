@@ -18,7 +18,7 @@ class Json:
                 self.data["root"][field[1].name] = field[1].value
 
     def save(self, filename):
-        filename = os.path.join(self.filesystem.root_, filename)
+        filename = self.filesystem.combine_paths(self.filesystem.root_, filename)
         if os.path.exists(filename) and debug:
             ic(f"[Warning] Overwriting existing file: {filename}")
         
@@ -28,7 +28,7 @@ class Json:
             ic(f"Saved data to: {filename}")
 
     def load(self, filename):
-        filename = os.path.join(self.filesystem.root_, filename)
+        filename = self.filesystem.combine_paths(self.filesystem.root_, filename)
         if not os.path.exists(filename) and debug:
             ic(f"[Error] File does not exist: {filename}")
             return
