@@ -8,14 +8,20 @@ class FileSystemManager:
     def __init__(self):
         self.root_ = Path.cwd()
         if debug:
-            ic(self.root_)
+            ic(f"Initialized root path: {self.root_}")
         self.absolutePaths_ = []
 
     def file_exists(self, path):
-        _path = Path(self.root_.as_posix() + path[1:])
+        if debug:
+            ic("file_exists")
+        _path = Path(self.root_.as_posix() + str(path)[1:])
+        if debug:
+            ic(f"Converted path: {path} to {_path}")
         return _path.exists()
 
     def ls(self, path=""):
+        if debug:
+            ic("ls")
         targetPath = None
         filePaths = []
 
@@ -30,6 +36,8 @@ class FileSystemManager:
             targetPath = self.root_
         else:
             tempPath = Path(self.root_.as_posix() + path[1:])
+            if debug:
+                ic(f"Converted path: {path} to {tempPath}")
             if tempPath.is_relative_to(self.root_):
                 targetPath = self.root_ / tempPath
             else:
@@ -50,8 +58,14 @@ class FileSystemManager:
         return filePaths
 
     def cp(self, src, dst):
+        if debug:
+            ic("cp")
+
         srcPath = Path(self.root_.as_posix() + src[1:])
         dstPath = Path(self.root_.as_posix() + dst[1:])
+        if debug:
+            ic(f"Converted source path: {src} to {srcPath}")
+            ic(f"Converted destination path: {dst} to {dstPath}")
         if srcPath.exists():
             if not dstPath.parent.exists():
                 try:
@@ -73,8 +87,14 @@ class FileSystemManager:
             return False
 
     def mv(self, src, dst):
+        if debug:
+            ic("mv")
+
         srcPath = Path(self.root_.as_posix() + src[1:])
         dstPath = Path(self.root_.as_posix() + dst[1:])
+        if debug:
+            ic(f"Converted source path: {src} to {srcPath}")
+            ic(f"Converted destination path: {dst} to {dstPath}")
         if srcPath.exists():
             if not dstPath.parent.exists():
                 try:
@@ -96,7 +116,12 @@ class FileSystemManager:
             return False
 
     def rm(self, name):
+        if debug:
+            ic("rm")
+
         _path = Path(self.root_.as_posix() + name[1:])
+        if debug:
+            ic(f"Converted path: {name} to {_path}")
         if _path.exists():
             try:
                 os.remove(_path)
@@ -111,7 +136,12 @@ class FileSystemManager:
             return False
 
     def rmdir(self, name):
+        if debug:
+            ic("rmdir")
+
         _path = Path(self.root_.as_posix() + name[1:])
+        if debug:
+            ic(f"Converted path: {name} to {_path}")
         if _path.exists() and _path.is_dir():
             try:
                 shutil.rmtree(_path)
@@ -126,63 +156,46 @@ class FileSystemManager:
             return False
 
     def mkdir(self, name):
-        if name.endswith('/'):
+        if debug:
+            ic("mkdir")
+
+        if str(name).endswith('/'):
             if debug:
                 ic(f"Path ends with '/': {name}")
             return False
 
-        _name = name
-        _path = None
-        if _name.startswith("./"):  # If name starts with "./"
-            if debug:
-                ic("Converted relative path to absolute")
-            try:
-                _name = _name[2:]  # Remove "./" from the start of the path
-                path = Path(self.root_.as_posix() + _name[1:])
-                if not path.is_absolute():
-                    path = self.root_ / path
-                if self.root_ not in path.parents:
-                    if debug:
-                        ic(f"Path is not in the subpath of root or one path is relative and the other is absolute: {str(path)}")
-                    return False
-                _path = path
-            except Exception as e:
-                if debug:
-                    ic(f"Failed to create path. Error: {str(e)}")
-                return False
-        else:
-            try:
-                path = Path(self.root_.as_posix() + _name[1:])
-                if not path.is_absolute():
-                    path = self.root_ / path
-                _path = path
-            except Exception as e:
-                if debug:
-                    ic(f"Failed to create path. Error: {str(e)}")
-                return False
+        _name = str(name)
+        if str(name).startswith("./"):
+            _name = str(name)[1:]
+        _path = Path(self.root_.as_posix() + str(_name))
+        if debug:
+            ic(f"Converted path: {_name} to {_path}")
+
+        if not _path.is_absolute():
+            _path = self.root_ / _path
 
         if '/' in _path.as_posix():
-            newDir = _path
-            intermediatePath = Path()
-            for component in newDir.parts:
-                intermediatePath /= component
-                try:
-                    if not intermediatePath.exists():
-                        os.mkdir(intermediatePath)
-                        if debug:
-                            ic(f"Created directory: {str(intermediatePath)}")
-                except Exception as e:
-                    if debug:
-                        ic(f"Failed to create directory: {str(intermediatePath)}. Error: {str(e)}")
-                    return False
-            return True
+            try:
+                _path.mkdir(parents=True, exist_ok=False)
+                if debug:
+                    ic(f"Created directory: {str(_path)}")
+                return True
+            except Exception as e:
+                if debug:
+                    ic(f"Failed to create directory: {str(_path)}. Error: {str(e)}")
+                return False
         else:
             if debug:
                 ic(f"Path is not in Unix format: {str(_path)}")
             return False
 
     def touch(self, name):
+        if debug:
+            ic("touch")
+
         path = Path(self.root_.as_posix() + name[1:])
+        if debug:
+            ic(f"Converted path: {name} to {path}")
         if not path.is_absolute():
             path = self.root_ / path
         if '/' in path.as_posix():
@@ -200,10 +213,16 @@ class FileSystemManager:
             return False
 
     def pwd(self):
+        if debug:
+            ic("pwd")
         return self.root_
 
     def cd(self, path):
+        if debug:
+            ic("cd")
         _path = Path(self.root_.as_posix() + path[1:])
+        if debug:
+            ic(f"Converted path: {path} to {_path}")
         if _path.is_absolute():
             if _path.is_dir():
                 self.root_ = _path
@@ -229,6 +248,8 @@ class FileSystemManager:
 
         elif path.startswith("."):
             _path = Path(self.root_.as_posix() + path[1:])
+            if debug:
+                ic(f"Converted path: {path} to {_path}")
             if _path.is_dir():
                 self.root_ = _path
                 if debug:
@@ -242,7 +263,7 @@ class FileSystemManager:
         else:
             self.root_ = self.root_ / path
             if debug:
-                ic(self.root_)
+                ic(f"Changed root path to: {self.root_}")
             if self.root_.is_dir():
                 if debug:
                     ic(f"Changed to: {str(_path)}")

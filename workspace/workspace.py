@@ -20,9 +20,26 @@ class Workspace:
             self.package.load_package_json()
             ic(f"Loaded package.json from {self.path}")
 
-    def run_script(self):
-        script_name = Prompt.ask("Enter the script name: ")
-        if script_name in self.package.scripts:
-            os.system(self.package.scripts[script_name])
-            ic(f"Running script {script_name}")
+    def run(self):
+        workspaces = self.package.workspaces
+        for index, workspace in enumerate(workspaces, start=1):
+            print(f"{index}. {workspace}")
+        workspace_index = Prompt.ask("Enter the number of the workspace you want to select: ", int)
+        selected_workspace = workspaces[workspace_index - 1]
+        ic(f"Selected workspace: {selected_workspace}")
+
+    def focus(self):
+        workspace_name = Prompt.ask("Enter the workspace name: ")
+        if workspace_name in self.package.workspaces:
+            os.system(f"yarn workspace {workspace_name} install")
+            ic(f"Installing workspace {workspace_name} and its dependencies")
+
+    def foreach(self):
+        command = Prompt.ask("Enter the command to run on all workspaces: ")
+        os.system(f"yarn workspaces foreach {command}")
+        ic(f"Running command {command} on all workspaces")
+
+    def list(self):
+        os.system("yarn workspaces list")
+        ic("Listing all available workspaces")
 

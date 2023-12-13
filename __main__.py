@@ -15,7 +15,7 @@ if __name__ == "__main__":
         else:
             if not debug:
                 ic(f"No such function: {function_name}")
-            yard.init()
+            
     else:
         if not debug: 
             ic("No function name provided in command line arguments.")
