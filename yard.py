@@ -14,14 +14,13 @@ class Yard:
 
         self.project = Project()
         self.projectJson = Json(self.fs)
+        self.projectJson.change_root("project")
 
         #self.lockJson = Json(self.fs.root_dir / "lock.yard")
         ic(self.fs.root_) if debug else None
         
         if debug:
             self.root_dir = "./yard_develop_space"
-            print(self.root_dir)
-            print("------------------------")
             if self.fs.file_exists(self.root_dir):
                 self.fs.rmdir(self.root_dir)
             
@@ -37,6 +36,8 @@ class Yard:
         self.projectJson.insert_project_data(self.project)
         self.projectJson.display_json_tree(self.projectJson.data)
         self.projectJson.save("./project.yard.json")
+        self.projectJson.change_root("dupa")
+        self.projectJson.save("./projectw.yard.json")
         #self.lock.save()
 
     def interactive_init(self):
