@@ -1,3 +1,4 @@
+annotated-types==0.6.0
 asttokens==2.4.1
 attrs==23.1.0
 colorama==0.4.6
@@ -9,9 +10,12 @@ jsonschema-specifications==2023.11.2
 Markdown==3.5.1
 markdown-it-py==3.0.0
 mdurl==0.1.2
+pydantic==2.5.3
+pydantic_core==2.14.6
 Pygments==2.17.2
 python-jsonschema-objects==0.5.1
 referencing==0.32.0
 rich==13.7.0
 rpds-py==0.15.2
 six==1.16.0
+typing_extensions==4.9.0
