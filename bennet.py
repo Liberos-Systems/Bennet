@@ -7,7 +7,7 @@ from yardjson.json import Json
 from rich.prompt import Prompt
 from data.structures.project import Project
 
-class Yard:
+class Bennet:
     def __init__(self):
         print(f"YARD version: {version}")
         self.fs = FileSystemManager()
