@@ -31,3 +31,14 @@ To install Bennet, execute the following command in a terminal:
 ```bash
 sudo python3 setup.py install
 ```
+
+## Development
+
+To set up a Python project, execute the following command in a terminal:
+
+```bash
+pip install -r requirements.txt
+```
+
+
+
