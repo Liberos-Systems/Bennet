@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://jsonschema.net/anvil",
+  "title": "Anvil Base",
+  "description": "This 'anvil' scheme is a template for a class managing projects for Bennet",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string", "default": "my-new-project" },
+    "version": { "type": "string", "default": "1.0.0", "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$" },
+    "description": { "type": "string", "default": "My New Project description." },
+    "main": { "type": "string", "minLength": 1, "default": "index.js" },
+    "scripts": {
+      "type": "array",
+      "items": {
+        "title": "script",
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "default": "build" },
+          "command": { "type": "string", "default": "meson compile -C builddir" }
+        }
+      }
+    },
+    "repository": {
+      "title": "repository",
+      "type": "object",
+      "properties": {
+        "url": { "type": "string", "default": "https://example.com/your-username/my-new-project" },
+        "vcs": { "type": "string", "default": "git" }
+      }
+    },
+    "author": { "type": "string", "default": "Your Name <you@example.com>" },
+    "license": { "type": "string", "minLength": 1, "default": "GPLv3" },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "devDependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    }
+  }
+}

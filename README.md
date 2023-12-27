@@ -40,5 +40,6 @@ To set up a Python project, execute the following command in a terminal:
 pip install -r requirements.txt
 ```
 
+TODO: pylint
 
 

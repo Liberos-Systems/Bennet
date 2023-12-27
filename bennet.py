@@ -1,26 +1,20 @@
 #!/usr/bin/env python3
+from common.common import ic
+from hodges.file_system.file_system_class import FileSystemManager
+from anvil.anvil import Anvil
+from common.config import version, debug
 from rich import print
-from config import version, debug
-from filesystem.filesystem import FileSystemManager
-from icecream import ic
-from yardjson.json import Json
-from rich.prompt import Prompt
-from data.structures.project import Project
 
 class Bennet:
     def __init__(self):
-        print(f"YARD version: {version}")
+        print(f"BENNET version: {version}")
         self.fs = FileSystemManager()
-
-        self.project = Project()
-        self.projectJson = Json(self.fs)
-        self.projectJson.change_root("project")
-
-        #self.lockJson = Json(self.fs.root_dir / "lock.yard")
+        self.project = Anvil(filesystem=self.fs, root="project")
+        
         ic(self.fs.root_) if debug else None
         
         if debug:
-            self.root_dir = "./yard_develop_space"
+            self.root_dir = "./bennet_develop_space"
             if self.fs.file_exists(self.root_dir):
                 self.fs.rmdir(self.root_dir)
             
@@ -28,31 +22,17 @@ class Bennet:
                 self.fs.cd(self.root_dir)
 
         else:
-            print("no debug")
+            ic("no debug")
 
 
     def init(self):
-        self.interactive_init()
-        self.projectJson.insert_project_data(self.project)
-        self.projectJson.display_json_tree(self.projectJson.data)
-        self.projectJson.save("./project.yard.json")
-        self.projectJson.change_root("dupa")
-        self.projectJson.save("./projectw.yard.json")
-        #self.lock.save()
+        self.project.init()
 
     def interactive_init(self):
-        self.project.name.value = Prompt.ask("Enter the project name: ", default=self.project.name.default_value)
-        self.project.version.value = Prompt.ask("Enter the project version: ", default=self.project.version.default_value)
-        self.project.description.value = Prompt.ask("Enter the project description: ", default=self.project.description.default_value)
-        self.project.main.value = Prompt.ask("Enter the main file: ", default=self.project.main.default_value)
-        self.project.author.value = Prompt.ask("Enter the author name: ", default=self.project.author.default_value)
-        self.project.license.value = Prompt.ask("Enter the license: ", default=self.project.license.default_value)
+        self.project.interactive_init()
 
-    def add(self):
-        ic("Add function called") if debug else None
-
-    def delete(self):
-        ic("Delete function called") if debug else None
+    def change_root(self):
+        self.project.change_root()
 
     def help(self):
         ic("Help function called") if debug else None
