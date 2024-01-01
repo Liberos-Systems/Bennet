@@ -1,7 +1,7 @@
 # Bennet: A Tool for Building Linux Projects
 
 ## Introduction
-Bennet is a tool inspired by Yarn, tailored specifically for building Linux projects in C/C++, Python, JavaScript, and GTK environments. It seamlessly manages workspaces, packages, and builds for diverse language and build system combinations.
+Bennet is a tool inspired by Yarn, designed specifically for building Linux projects in C/C++, Python, JavaScript, and GTK environments. It seamlessly manages workspaces, packages, and builds for diverse language and build system combinations.
 
 ## Purpose
 Bennet serves as a comprehensive platform for building and managing Linux projects. It simplifies the process of creating workspaces, managing packages, and building programs in various languages, including C/C++, Python, and JavaScript. By supporting various build systems, such as Meson, Bennet facilitates the creation of packages compatible with popular formats like deb and rpm.
