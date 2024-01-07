@@ -15,18 +15,21 @@ class Json:
         self.root = new_root
         self.data = {self.root: old_data}
 
-    def insert_project_data(self, project):
-        if project:
-            for field in project:
-                self.data[self.root][field[1].name] = field[1].value
+    def insert_init_data(self, project):
+        for key, value in project.items():
+            ic(key, value)
+            self.data[self.root][key] = value
 
     def save(self, filename):
+        print(filename)
         filename = self.filesystem.combine_paths(self.filesystem.root_, filename)
+        
         if os.path.exists(filename) and debug:
             ic(f"[Warning] Overwriting existing file: {filename}")
         
         with open(filename, "w") as f:
             json.dump(self.data, f, indent=4)
+            
         if debug:
             ic(f"Saved data to: {filename}")
 

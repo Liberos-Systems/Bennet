@@ -275,7 +275,7 @@ class FileSystemManager:
                     ic(f"Path does not exist or is not a directory: {_path}")
                 return False
             
-    def combine_paths(self, absolute_path, relative_path):
+    def combine_paths(self, absolute_path: str, relative_path: str) -> Path:
         if debug:
             ic(f"Call function: combine_paths")
         absolute_path = Path(absolute_path)

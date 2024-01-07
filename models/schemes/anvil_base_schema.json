@@ -1,6 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "http://jsonschema.net/anvil",
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "$id": "http://jsonschema.net/anvil",
   "title": "Anvil Base",
   "description": "This 'anvil' scheme is a template for a class managing projects for Bennet",
   "type": "object",

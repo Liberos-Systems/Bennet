@@ -8,28 +8,28 @@ from rich.prompt import Prompt
 class Anvil(AnvilBase):
     def __init__(self, filesystem, root="root", *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.filesystem = FileSystemManager()
+        self.filesystem = filesystem
         self.root = root
         self.data = {self.root: {}}
         self.project = None
         self.project_file = "./project.bennet.json"
 
-        #self.anvilJson = Json(self.fs)
-        #self.anvilJson.change_root(root)
+        self.anvilJson = Json(self.filesystem)
+        self.anvilJson.change_root(self.filesystem.pwd())
 
         if debug:
-            print("----- Displaying All Items -----")
+            ic("----- Displaying All Items -----")
             self.display_all_items()
-            print("----- End of All Items -----")
-            print("----- Displaying __dict__ -----")
+            ic("----- End of All Items -----")
+            ic("----- Displaying __dict__ -----")
             ic(self.__dict__)
-            print("----- End of __dict__ -----")
-            print("----- Displaying scripts[0].__dict__ -----")
+            ic("----- End of __dict__ -----")
+            ic("----- Displaying scripts[0].__dict__ -----")
             ic(self.scripts[0].__dict__)
-            print("----- End of scripts[0].__dict__ -----")
-            print("----- Displaying repository.__dict__ -----")
+            ic("----- End of scripts[0].__dict__ -----")
+            ic("----- Displaying repository.__dict__ -----")
             ic(self.repository.__dict__)
-            print("----- End of repository.__dict__ -----")
+            ic("----- End of repository.__dict__ -----")
         
     def change_root(self, new_root):
         old_data = self.data[self.root]
@@ -39,25 +39,32 @@ class Anvil(AnvilBase):
 
     def init(self):
         self.interactive_init()
-        self.anvilJson.insert_project_data(self.project)
-
 
     def interactive_init(self):
-        for key, value in self.__dict__.items():
-            if isinstance(value, (dict, list)):
-                continue
-            prompt = f"Should I overwrite the value of {key}? (Y/N): "
-            overwrite = Prompt.ask(prompt, default="N")
-            if overwrite.lower() == "y":
-                self.project.name.value = Prompt.ask(f"Enter the new value for {key}: ", default=value)
+        if debug: 
+            ic("interactive_init")
+            ic(self._properties.items())
 
-        self.anvilJson.save(self.filesystem.combine_paths(self.filesystem.root_, self.project_file))
-        self.anvilJson.load(self.filesystem.combine_paths(self.filesystem.root_, self.project_file))
-        if self.filesystem.exists(self.filesystem.combine_paths(self.filesystem.root_, self.project_file)) and debug:
-            ic(f"[Warning] File already exists: {self.filesystem.combine_paths(self.filesystem.root_, self.project_file)}")
-            return
+        for key, obj in self._properties.items():
+            if obj is not None:
+                if not str(obj).startswith('<anvil_base/'):
+                    value = obj.value if hasattr(obj, 'value') else obj
+                    prompt = f"Current value of {key}: [red]{value}[/red]. Should I overwrite the value of {key}? (Y/N): "
+                    overwrite = Prompt.ask(prompt, default="N")
+                    if overwrite.lower() == "y":
+                        new_value = Prompt.ask(f"Enter the new value for {key}: ", default=str(value))
+                        if hasattr(obj, 'value'):
+                            obj.value = new_value
+                        else:
+                            self._properties[key] = new_value
+        
+        # Save properties that are not Anvilbase to json file after changes
+        non_anvilbase_properties = {k: str(v) for k, v in self._properties.items() if not str(v).startswith('<anvil_base/')}
+        self.anvilJson.insert_init_data(non_anvilbase_properties)
+        self.anvilJson.save(str(self.project_file))
+        
     def display_all_items(self):
         for key, value in self.__dict__.items():
-            print(f"{key}: {value}")
+            ic(f"{key}: {value}")
 
 
