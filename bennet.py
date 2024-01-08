@@ -7,9 +7,10 @@ from rich import print
 
 class Bennet:
     def __init__(self):
-        print(f"BENNET version: {version}")
+        ic(f"BENNET version: {version}")
         self.fs = FileSystemManager()
-        self.project = Anvil(filesystem=self.fs, root="project")
+        self.project_name = "./project.bennet.json"
+        self.project = Anvil(filesystem=self.fs, root="project", project_name=self.project_name)
         
         ic(self.fs.root_) if debug else None
         
@@ -24,6 +25,18 @@ class Bennet:
         else:
             ic("no debug")
 
+
+    def build(self):
+        pass
+
+    def update(self):
+        pass
+
+    def install(self):
+        pass
+
+    def script(self, operation):
+        pass
 
     def init(self):
         self.project.init()

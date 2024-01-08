@@ -6,13 +6,13 @@ from common.config import debug
 from rich.prompt import Prompt
 
 class Anvil(AnvilBase):
-    def __init__(self, filesystem, root="root", *args, **kwargs):
+    def __init__(self, filesystem, root="root", project_name="./project.bennet.json", *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.filesystem = filesystem
         self.root = root
         self.data = {self.root: {}}
         self.project = None
-        self.project_file = "./project.bennet.json"
+        self.project_name = project_name
 
         self.anvilJson = Json(self.filesystem)
         self.anvilJson.change_root(self.filesystem.pwd())
