@@ -12,3 +12,7 @@ def ic(*args, **kwargs):
         original_ic(log_message, **kwargs)
     except Exception as e:
         original_ic(f"An error occurred: {e}")
+
+def nf():
+    ic("Możesz mi powiedzieć jak wykuć broń z magicznej rudy BEZ magicznej rudy?")
+    ic("Program halted due to missing project file.")

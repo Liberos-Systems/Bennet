@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-from common.common import ic
+from common.common import ic, nf
 from hodges.file_system.file_system_class import FileSystemManager
 from anvil.anvil import Anvil
 from common.config import version, debug
-from rich import print
-
+from models.classes.git_base import GitRepo
 class Bennet:
     def __init__(self):
         ic(f"BENNET version: {version}")
@@ -13,40 +12,68 @@ class Bennet:
         self.project = Anvil(filesystem=self.fs, root="project", project_name=self.project_name)
         
         ic(self.fs.root_) if debug else None
-        
+
         if debug:
             self.root_dir = "./bennet_develop_space"
-            if self.fs.file_exists(self.root_dir):
-                self.fs.rmdir(self.root_dir)
-            
-            if(self.fs.mkdir(self.root_dir)):
+
+            if self.fs.exists(self.root_dir):
                 self.fs.cd(self.root_dir)
 
-        else:
-            ic("no debug")
-
-
     def build(self):
-        pass
+        ic("Running build function") if debug else None
+        if not self.project.load():
+            nf()
+            return
+        
+        self.project.data = self.project.anvilJson.get_data()
+        ic(self.project.data)
 
     def update(self):
-        pass
+        ic("Running update function") if debug else None
+        if not self.project.load():
+            nf()
+            return
 
     def install(self):
-        pass
+        ic("Running install function") if debug else None
+        if not self.project.load():
+            nf()
+            return
 
     def script(self, operation):
-        pass
+        ic("Running script function") if debug else None
+        if not self.project.load():
+            nf()
+            return
 
     def init(self):
+        ic("Running init function") if debug else None
+
+        if debug:
+            self.root_dir = "./bennet_develop_space"
+            self.fs.cd("..")
+            if self.fs.exists(self.root_dir):
+                self.fs.rmdir(self.root_dir)
+
+            if not self.fs.exists(self.root_dir):
+                self.fs.mkdir(self.root_dir)
+                self.fs.cd(self.root_dir)
+
         self.project.init()
 
     def interactive_init(self):
+        ic("Running interactive_init function") if debug else None
         self.project.interactive_init()
 
     def change_root(self):
+        ic("Running change_root function") if debug else None
         self.project.change_root()
 
     def help(self):
-        ic("Help function called") if debug else None
+        ic("Running Help function") if debug else None
+
+    def abba(self):
+        git_base = GitRepo('https://github.com/elementary/switchboard-plug-network.git')
+        repo_info = git_base.get_repo_info()
+        ic(repo_info) if debug else None
 

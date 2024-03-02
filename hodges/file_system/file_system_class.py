@@ -13,9 +13,9 @@ class FileSystemManager:
             ic(f"Initialized root path: {self.root_}")
         self.absolutePaths_ = []
 
-    def file_exists(self, path):
+    def exists(self, path):
         if debug:
-            ic(f"Call function: file_exists")
+            ic(f"Call function: exists")
         _path = Path(self.root_.as_posix() + str(path)[1:])
         if debug:
             ic(f"Converted path: {_path}")
@@ -220,60 +220,32 @@ class FileSystemManager:
         return str(self.root_)
 
     def cd(self, path):
+        print(path)
         if debug:
             ic(f"Call function: cd")
-        _path = Path(self.root_.as_posix() + path[1:])
-        if debug:
-            ic(f"Converted path: {_path}")
-        if _path.is_absolute():
-            if _path.is_dir():
-                self.root_ = _path
-                if debug:
-                    ic(f"Changed to: {_path}")
-                return True
-            else:
-                if debug:
-                    ic(f"Path does not exist or is not a directory: {_path}")
-                return False
-
+        
+        _path = None
+        if path == "..":
+            _path = self.root_.parent
         elif path == "~":
-            self.root_ = Path.home()
-            if debug:
-                ic(f"Changed to: {_path}")
-            return True
-
-        elif path.startswith(".."):
-            self.root_ = self.root_.parents[1]
-            if debug:
-                ic(f"Changed to: {_path}")
-            return True
-
+            _path = Path.home()
         elif path.startswith("."):
             _path = Path(self.root_.as_posix() + path[1:])
-            if debug:
-                ic(f"Converted path: {_path}")
-            if _path.is_dir():
-                self.root_ = _path
-                if debug:
-                    ic(f"Changed to: {_path}")
-                return True
-            else:
-                if debug:
-                    ic(f"Path does not exist or is not a directory: {_path}")
-                return False
+        else: 
+            _path = Path(self.root_ / path.lstrip('/'))
 
-        else:
-            self.root_ = self.root_ / path
+        if debug:
+            ic(f"Converted path: {_path}")
+
+        if _path and _path.is_absolute() and _path.is_dir():
+            self.root_ = _path
             if debug:
-                ic(f"Changed root path to: {self.root_}")
-            if self.root_.is_dir():
-                if debug:
-                    ic(f"Changed to: {_path}")
-                return True
-            else:
-                if debug:
-                    ic(f"Path does not exist or is not a directory: {_path}")
-                return False
+                ic(f"Changed to: {_path}")
+            return True
+        else:
+            if debug:
+                ic(f"Path does not exist or is not a directory: {_path}")
+            return False
             
     def combine_paths(self, absolute_path: str, relative_path: str) -> Path:
         if debug:

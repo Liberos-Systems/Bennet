@@ -21,7 +21,6 @@ class Json:
             self.data[self.root][key] = value
 
     def save(self, filename):
-        print(filename)
         filename = self.filesystem.combine_paths(self.filesystem.root_, filename)
         
         if os.path.exists(filename) and debug:
@@ -35,22 +34,33 @@ class Json:
 
     def load(self, filename):
         filename = self.filesystem.combine_paths(self.filesystem.root_, filename)
-        if not os.path.exists(filename) and debug:
-            ic(f"[Error] File does not exist: {filename}")
-            return
-        with open(filename, "r") as f:
-            self.data = json.load(f)
+        if not os.path.exists(filename):
+            if debug:
+                ic(f"[Error] File does not exist: {filename}")
+            return False
+        try:
+            with open(filename, "r") as f:
+                self.data = json.load(f)
+        except Exception as e:
+            if debug:
+                ic(f"[Error] Failed to load data from: {filename}. Error: {e}")
+            return False
+        
         if debug:
             ic(f"Loaded data from: {filename}")
 
-    def get_data(self, key):
-        data = self.data[self.root].get(key)
+        return True
 
+    def get_data(self, key=None):
+        if key is None:
+            return self.data[self.root]
+        
+        data = self.data[self.root].get(key)
         if data is None and debug:
-            ic("[Warning] Key does not exist in data.")
+            ic(f"[Warning] Key '{key}' does not exist in data.")
             return None
 
-        return {id: data} if isinstance(data, dict) else data
+        return data
 
     def add_data(self, key, value):
         if key in self.data[self.root] and debug:
@@ -75,6 +85,7 @@ class Json:
             return
         self.data[self.root] = dict(sorted(self.data[self.root].items(), key=lambda x: x[1][key]))
 
+    #TODO rmeove
     def display_json_tree(self, data=None, indent=0):
         if data is None:
             data = self.data[self.root]

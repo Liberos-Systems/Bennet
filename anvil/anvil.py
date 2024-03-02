@@ -12,10 +12,9 @@ class Anvil(AnvilBase):
         self.root = root
         self.data = {self.root: {}}
         self.project = None
-        self.project_name = project_name
+        self.project_file = project_name
 
-        self.anvilJson = Json(self.filesystem)
-        self.anvilJson.change_root(self.filesystem.pwd())
+        self.anvilJson = Json(self.filesystem, root=root)
 
         if debug:
             ic("----- Displaying All Items -----")
@@ -67,4 +66,12 @@ class Anvil(AnvilBase):
         for key, value in self.__dict__.items():
             ic(f"{key}: {value}")
 
+    def load(self):
+        try:
+            self.anvilJson.load(self.project_file)
+        except FileNotFoundError:
+            return False
+        except Exception as e:
+            raise e
+        return True
 
